@@ -11,3 +11,8 @@ game/export_presets.cfg
 
 # IDEs
 .vscode/
+
+# SCons Build Info
+.sconsign.dblite
+*.pdb
+*.lib
