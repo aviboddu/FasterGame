@@ -26,7 +26,7 @@ namespace godot {
             FrictionArea();
             ~FrictionArea();
 
-            void _process(double delta);
+            void _physics_process(double delta);
 
             Vector3 get_frictionCoefficient() const;
 

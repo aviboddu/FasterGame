@@ -75,7 +75,6 @@ func _physics_process(delta: float) -> void:
 		velocity.z += direction.z * ACCELERATION * delta * (1.0 if is_on_floor() else AIR_ACCELERATION_MODIFIER)
 	
 	velocity *= friction.get_frictionCoefficient()
-	print(friction.get_frictionCoefficient())
 	
 	_check_ray()
 	move_and_slide()

@@ -2,9 +2,7 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/physics_server3d.hpp>
 #include <godot_cpp/classes/physics_direct_space_state3d.hpp>
-#include <godot_cpp/classes/physics_direct_body_state3d.hpp>
 #include <godot_cpp/classes/physics_shape_query_parameters3d.hpp>
-#include <godot_cpp/classes/os.hpp>
 
 using namespace godot;
 
@@ -63,55 +61,55 @@ FrictionArea::FrictionArea() {
 
 FrictionArea::~FrictionArea() { }
 
-void FrictionArea::_process(double delta) {
+void FrictionArea::_physics_process(double delta) {
     uint_fast8_t oldSegments = overlappingSegments;
     overlappingSegments = 0;
+
     TypedArray<Node3D> overlappingBodies = get_overlapping_bodies();
     PhysicsServer3D* physicsServer = PhysicsServer3D::get_singleton();
     PhysicsDirectSpaceState3D* areaState = physicsServer->space_get_direct_state(physicsServer->area_get_space(get_rid()));
     Vector3 global_pos = get_global_position();
     RID parent_rid = cast_to<CollisionObject3D>(get_parent())->get_rid();
-    for (int64_t i = 0; i < overlappingBodies.size(); i++) {
-        if (cast_to<CollisionObject3D>(overlappingBodies[i])->get_rid() == parent_rid) {
+
+    for (int64_t i = 0; i < overlappingBodies.size(); i++) { // This might get slow if more coliders are near the player
+        if (cast_to<CollisionObject3D>(overlappingBodies[i])->get_rid() == parent_rid) { // Don't want to collide with the player
             continue;
         }
+        
         for (int32_t j = 0; j < physicsServer->body_get_shape_count(overlappingBodies[i]); j++) {
             PhysicsShapeQueryParameters3D query = PhysicsShapeQueryParameters3D();
             query.set_collide_with_bodies(true);
             query.set_collide_with_areas(false);
             query.set_collision_mask(this->get_collision_mask());
             query.set_shape_rid(physicsServer->body_get_shape(overlappingBodies[i], j));
-            TypedArray<Vector3> collisionPoints = areaState->collide_shape(&query);
-            for (int64_t k = 0; k < collisionPoints.size(); k++) {
-                Vector3 collisionPoint = collisionPoints[i];
-                collisionPoint = to_local(collisionPoint);
-                Vector3 absVector = collisionPoint.abs();
-                if (absVector[1] > 0.8) { // Y AXIS
-                    if (collisionPoint[1] > 0)
-                        overlappingSegments |= SEG_UP;
-                    else
-                        overlappingSegments |= SEG_DOWN;
-                } else if (absVector[0] > absVector[2]) {// X AXIS
-                    if (collisionPoint[0] > 0)
-                        overlappingSegments |= SEG_RIGHT;
-                    else
-                        overlappingSegments |= SEG_LEFT;
-                } else { // Z AXIS
-                    if (collisionPoint[2] > 0)
-                        overlappingSegments |= SEG_BACK;
-                    else
-                        overlappingSegments |= SEG_FRONT;
-                }
-                if (overlappingSegments == 0b111111)
-                    break;
+            TypedArray<Vector3> collisionPoints = areaState->collide_shape(&query, 1); // Most performance intensive line, optimization potential
+
+            Vector3 collisionPoint = to_local(collisionPoints[0]);
+            Vector3 absVector = collisionPoint.abs();
+            if (absVector[1] > 0.8) { // Y AXIS, TODO: Remove this hard-coded limit
+                if (collisionPoint[1] > 0)
+                    overlappingSegments |= SEG_UP;
+                else
+                    overlappingSegments |= SEG_DOWN;
+            } else if (absVector[0] > absVector[2]) { // X AXIS
+                if (collisionPoint[0] > 0)
+                    overlappingSegments |= SEG_RIGHT;
+                else
+                    overlappingSegments |= SEG_LEFT;
+            } else { // Z AXIS
+                if (collisionPoint[2] > 0)
+                    overlappingSegments |= SEG_BACK;
+                else
+                    overlappingSegments |= SEG_FRONT;
             }
-            if (overlappingSegments == 0b111111)
+
+            if (overlappingSegments == 0b111111) [[unlikely]]
                 break;
         }
-        if (overlappingSegments == 0b111111)
+        if (overlappingSegments == 0b111111) [[unlikely]]
           break;
     }
-    if (overlappingSegments != oldSegments)
+    if (overlappingSegments != oldSegments) [[unlikely]]
         frictionCoefficient = calculate_frictionCoefficient();
 }
 
