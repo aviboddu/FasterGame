@@ -18,7 +18,7 @@ sources = Glob("src/*.cpp")
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "game/bin/libext.{}.{}.framework/libgdexample.{}.{}".format(
+        "game/bin/libext.{}.{}.framework/libfrictionarea.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
