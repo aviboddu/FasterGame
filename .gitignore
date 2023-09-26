@@ -16,3 +16,7 @@ game/export_presets.cfg
 .sconsign.dblite
 *.pdb
 *.lib
+*.dll
+*.exp
+*.ilk
+*.obj
