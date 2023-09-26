@@ -1,3 +1,24 @@
-[gd_scene format=3 uid="uid://cq7f6kpiquebd"]
+[gd_scene load_steps=4 format=3 uid="uid://cq7f6kpiquebd"]
+
+[ext_resource type="PackedScene" uid="uid://dhp2pcyhve0uw" path="res://components/player.tscn" id="1_1o0y5"]
+[ext_resource type="PackedScene" uid="uid://cwgg6qggwxe2" path="res://components/UI/basic_ui.tscn" id="1_exxjg"]
+[ext_resource type="Script" path="res://LevelLoader.gd" id="4_vdmmb"]
 
 [node name="Main" type="Node3D"]
+
+[node name="player" parent="." instance=ExtResource("1_1o0y5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.951829, 0)
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Basic UI" parent="UI" instance=ExtResource("1_exxjg")]
+layout_mode = 1
+
+[node name="LevelLoader" type="Node" parent="."]
+script = ExtResource("4_vdmmb")

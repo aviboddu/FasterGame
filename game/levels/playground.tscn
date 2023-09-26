@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://btv5pge623dju"]
+
+[ext_resource type="Script" path="res://levels/spawn.gd" id="1_7q14m"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dbr20"]
+size = Vector3(20, 0.002, 20)
+
+[node name="playground" type="Node3D"]
+script = ExtResource("1_7q14m")
+
+[node name="spawn" type="Node3D" parent="."]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="StaticBody3D"]
+size = Vector3(20, 0.002, 20)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_dbr20")

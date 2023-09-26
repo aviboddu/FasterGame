@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://dhp2pcyhve0uw"]
+
+[ext_resource type="Script" path="res://components/player.gd" id="1_5qinm"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_y3akb"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_n4r84"]
+radius = 0.6
+height = 2.2
+
+[node name="player" type="CharacterBody3D"]
+script = ExtResource("1_5qinm")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_y3akb")
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+fov = 90.0
+
+[node name="InteractionRay" type="RayCast3D" parent="Camera"]
+
+[node name="FrictionArea" type="FrictionArea" parent="."]
+leftFrictionCoefficient = Vector3(1, 0.9, 0.8)
+rightFrictionCoefficient = Vector3(1, 0.9, 0.8)
+frontFrictionCoefficient = Vector3(0.8, 0.9, 1)
+backFrictionCoefficient = Vector3(0.8, 0.9, 1)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FrictionArea"]
+shape = SubResource("CapsuleShape3D_n4r84")
